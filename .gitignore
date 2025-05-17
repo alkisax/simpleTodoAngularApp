@@ -1,0 +1,44 @@
+# Node modules
+**/node_modules/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+
+# Build output
+build/
+
+# Optional: coverage reports from tests
+coverage/
+
+# Optional: local database
+*.sqlite
+*.db
+
+# Optional: debug files
+*.tgz
+
+# Optional: specific for Angular/React
+.angular/
+.next/
+out/

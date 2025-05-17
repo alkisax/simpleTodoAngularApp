@@ -1,0 +1,33 @@
+{
+  "name": "simple-todo-app",
+  "version": "1.0.0",
+  "description": "simple app to learn angular",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "cross-env NODE_ENV=test jest --coverage --testTimeout=50000 --runInBand",
+    "dev": "node --watch server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alkisax/simpleTodoAngularApp.git"
+  },
+  "keywords": [
+    "todo"
+  ],
+  "author": "alkisax",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alkisax/simpleTodoAngularApp/issues"
+  },
+  "homepage": "https://github.com/alkisax/simpleTodoAngularApp#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "mongoose": "^8.15.0",
+    "mongoose-to-swagger": "^1.5.1",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
+  }
+}
