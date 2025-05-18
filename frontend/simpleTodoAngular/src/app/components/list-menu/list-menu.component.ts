@@ -16,6 +16,7 @@ export class ListMenuComponent {
   // τα text και linkName καλούνται στην html
   // το app-welcome απο το @component/selector του welcome component ts
   menu = [
-    { text: 'Welcome', linkName: 'app-welcome' }
+    { text: 'Welcome', linkName: 'welcome' },
+    { text: 'Random', linkName: 'random'}
   ]
 }

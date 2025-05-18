@@ -1,0 +1,47 @@
+<div class="random">
+  <h1>Random number generator</h1>
+
+<!-- τα βάζω όλα σε ένα d-flex div -->
+<!-- class="form-control" είναι bootstrap -->
+<!-- (input)="onMinInput($event)" οι παρενθέσεις λένε οτι είναι event binding. το $event κουβαλαέι τα data στο componenet και τα πιάνει με το  onMinInput(event: Event) {} -->
+  <div class="d-flex gap-2">
+    <div class="mt-2 d-flex flex-column gap-2 w-25">
+      <label for="">Min num</label>
+      <input 
+        type="number" 
+        class="form-control" 
+        (input)="onMinInput($event)"
+      >
+      <span class="text-bg-info p-2">Current min {{ min }}</span>
+    </div>
+    <div class="mt-2 d-flex flex-column gap-2 w-25">
+      <label for="">Max num</label>
+      <input 
+        type="number" 
+        class="form-control"
+        (input)="onMaxInput($event)"
+      >
+      <span class="text-bg-info p-2">Current max {{ max }}</span>
+    </div>
+  </div>
+
+  <!-- Button to generate new number -->
+  <p class="text-muted">Between {{ min }} and {{ max }}</p>
+
+  <button class="generate-btn" (click)="generateRandomNum()">
+    Generate New Number
+  </button>
+
+  <h3>Generated Number: <span class="text-primary">{{ randomNum }}</span></h3>
+
+</div>
+
+<script>
+  /*
+( )	- (click)="doStuff()"	- Event binding (output)
+[ ]	- [value]="data"	- Property binding (input)
+[( )]	- [(ngModel)]="name"	- Two-way binding (input + output)
+$	- $event	- Event object (passed to handlers)
+#	- #myInput	- Template reference variable
+  */
+</script>

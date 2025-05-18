@@ -518,7 +518,7 @@ export class ListMenuComponent {
   // τα text και linkName καλούνται στην html
   // το app-welcome απο το @component/selector του welcome component ts
   menu = [
-    { text: 'Welcome', linkName: 'app-welcome' }
+    { text: 'Welcome', linkName: 'welcome' }
   ]
 }
 ```
@@ -587,7 +587,132 @@ export class AppComponent {
 </div>
 ```
 
-## create roll a dice simple sub-component
+## create random number simple sub-component
+- το ng add κανει install και τις ρυθμήσεις στα σετινγκσ
+```bash
+ng add @angular/material
+```
+
+```bash
+ng generate component components/random
+```
+- αρχικά προσθέτουμε το νέου component στο routes/app/menu
+
+#### app.routes.ts
+```ts
+import { RandomComponent } from './components/random/random.component'
+
+  { path: 'random', component: RandomComponent},
+```
+
+#### list-menu.components.ts
+```ts
+  menu = [
+    { text: 'Welcome', linkName: 'welcome' },
+    { text: 'Random', linkName: 'random'}
+  ]
+```
+
+- φτιαχνουμε την λογική του τυχαίου αρηθμού
+#### random.components.ts
+```ts
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-random',
+  imports: [],
+  templateUrl: './random.component.html',
+  styleUrl: './random.component.css'
+})
+export class RandomComponent {
+  // οι μεταβλητές που χρειάζομαι. τις αρχικοποιώ για να μην έχω ΝαΝ
+  userInput: number = 0
+  min: number = 0
+  max: number = 100
+  // αυτήν θα την καλέσω στη html με {{}} γιατί είναι το αποτέλεσμά μου
+  randomNum: number = 100
+  temp: number | null = null
+
+  generateRandomNum = () => {
+    // αν η max μικροτερη απο min τις κάνω swap
+    if (this.max < this.min) {
+      this.temp = this.max
+      this.max = this.min
+      this.min = this.temp
+    }
+    this.randomNum = Math.floor(Math.random() * (this.max - this.min + 1)) + this.min
+  }
+  /*
+  Σε react αυτο θα γραφόταν (με useState) 
+
+  const handleMinChange = (e) => {
+    setMin(Number(e.target.value));
+  };
+  
+  η παράξενη συνταξη είναι γιατί η ts θέλει type asertion. 
+  By default, TypeScript thinks event.target is just a generic "EventTarget" (could be any element)
+  We're telling TypeScript: "No, trust me, this is specifically an HTML input element"
+  */
+  onMinInput(event: Event) {
+    this.min = Number((<HTMLInputElement>event.target).value);
+  }
+
+  onMaxInput(event: Event) {
+    this.max = Number((<HTMLInputElement>event.target).value);
+  }
+}
+```
+
+#### random.component.html
+```html
+<div class="random">
+  <h1>Random number generator</h1>
+
+<!-- τα βάζω όλα σε ένα d-flex div -->
+<!-- class="form-control" είναι bootstrap -->
+<!-- (input)="onMinInput($event)" οι παρενθέσεις λένε οτι είναι event binding. το $event κουβαλαέι τα data στο componenet και τα πιάνει με το  onMinInput(event: Event) {} -->
+  <div class="d-flex gap-2">
+    <div class="mt-2 d-flex flex-column gap-2 w-25">
+      <label for="">Min num</label>
+      <input 
+        type="number" 
+        class="form-control" 
+        (input)="onMinInput($event)"
+      >
+      <span class="text-bg-info p-2">Current min {{ min }}</span>
+    </div>
+    <div class="mt-2 d-flex flex-column gap-2 w-25">
+      <label for="">Max num</label>
+      <input 
+        type="number" 
+        class="form-control"
+        (input)="onMaxInput($event)"
+      >
+      <span class="text-bg-info p-2">Current max {{ max }}</span>
+    </div>
+  </div>
+
+  <!-- Button to generate new number -->
+  <p class="text-muted">Between {{ min }} and {{ max }}</p>
+
+  <button class="generate-btn" (click)="generateRandomNum()">
+    Generate New Number
+  </button>
+
+  <h3>Generated Number: <span class="text-primary">{{ randomNum }}</span></h3>
+
+</div>
+
+<script>
+  /*
+( )	- (click)="doStuff()"	- Event binding (output)
+[ ]	- [value]="data"	- Property binding (input)
+[( )]	- [(ngModel)]="name"	- Two-way binding (input + output)
+$	- $event	- Event object (passed to handlers)
+#	- #myInput	- Template reference variable
+  */
+</script>
+```
 
 ## showcase connect with internet api sub-component
 
