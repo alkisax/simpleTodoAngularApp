@@ -3,10 +3,11 @@
 import { Routes } from '@angular/router';
 import { WelcomeComponent } from './components/welcome/welcome.component'
 import { RandomComponent } from './components/random/random.component'
-
+import { HttpClientComponent } from './components/http-client/http-client.component'
 
 export const routes: Routes = [
   { path: 'random', component: RandomComponent },
   { path: 'welcome', component: WelcomeComponent },
+  { path: 'weather', component: HttpClientComponent},
   {path: '', redirectTo:'/welcome', pathMatch:'full'}
 ];

@@ -715,5 +715,89 @@ $	- $event	- Event object (passed to handlers)
 ```
 
 ## showcase connect with internet api sub-component
+```bash
+ng generate component components/http-client
+ng generate service shared/services/weather
+ng genarate interface shared/interfaces/weather
+ng generate environments
+```
+
+#### app.config.ts
+- αυτά μονο είναι καινούργια
+```
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+```
+```ts
+import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
+import { provideRouter } from '@angular/router';
+
+import { routes } from './app.routes';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideZoneChangeDetection({ eventCoalescing: true }), provideRouter(routes),
+    provideAnimationsAsync(),
+    provideHttpClient(withInterceptorsFromDi())
+  ]
+};
+```
+
+#### weather.service.ts
+```ts
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http'
+import { Weather } from '../interfaces/weather'
+import { environment } from '../../../environments/environment'
+
+const baseUrl = 'https://api.openweathermap.org/data/2.5/weather?q='
+
+@Injectable({
+  providedIn: 'root'
+})
+export class WeatherService {
+
+  // αυτή η μεταβλιτή κληρονομοί όλλες τις ιδιώτητες του service HttpClient. Με το inject γιατί έχει @Injectable εδώ λίγο παραπάνω
+  http: HttpClient = inject(HttpClient)
+
+    getWeather(city: string = 'Athens', country: string = 'Greece') {
+    return this.http.get<Weather>(
+      `${baseUrl}?q=${city},${country}&appid=${environment.weatherApiKey}`, {
+        headers:{
+          Accetp: "application/json"
+        }
+      }
+    );
+  }
+}
+```
+#### interfaces/weather.ts
+```ts
+
+```
+
+- για να εμφανηστεί στο μενου routes/list-menu
+#### app.routes.ts
+```ts
+import { HttpClientComponent } from './components/http-client/http-client.component'
+
+  { path: 'weather', component: HttpClientComponent},
+```
+
+#### list-menu.component.ts
+```ts
+    { text: 'Random', linkName: 'random'}
+```
+
+- Ο client
+#### http-client.components.ts
+```ts
+
+```
+
+
+
 
 ## todo sub-component

@@ -17,6 +17,7 @@ export class ListMenuComponent {
   // το app-welcome απο το @component/selector του welcome component ts
   menu = [
     { text: 'Welcome', linkName: 'welcome' },
+    { text: 'Weather', linkName: 'weather'},
     { text: 'Random', linkName: 'random'}
   ]
 }
