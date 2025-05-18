@@ -1,0 +1,72 @@
+<!-- δηαλδή να μου εμφανίζει το μενου και να έχει χώρο για να εμφανίζει το περιεχόμενο του κάθε component. θα πρέπει να γίνουν import και στο ts -->
+
+<header class="bg-primary text-white p-3 sticky-top">
+  <div class="container">
+    <h1>Simple ToDo app</h1>
+    <p>learning angular</p>
+  </div>
+</header>
+
+<div class="d-flex vh-100">
+  <app-list-menu class="text-nowrap w-25   bg-light p-3 border-end"></app-list-menu>
+  <span class="flex-grow-1 p-2 text-nowrap w-75">
+    <router-outlet></router-outlet>  
+  </span>
+</div>
+
+<script>
+  /*
+Header and container
+bg-primary
+Adds Bootstrap’s primary theme color as background (a blue shade by default).
+
+text-white
+Makes the text color white for contrast against the dark background.
+
+p-3
+Adds padding (around 1rem) on all sides inside the element for spacing.
+
+sticky-top
+Makes the header stick to the top of the viewport when scrolling (CSS position: sticky; top: 0).
+
+container
+Centers content and applies horizontal padding with a max width for responsive layout.
+
+Layout with flexbox and sizing
+d-flex
+Enables flexbox layout on the container, making child elements lay out in a row by default.
+
+vh-100
+Sets the height of the container to 100% of the viewport height.
+
+Sidebar menu <app-list-menu>
+text-nowrap
+Prevents text inside the element from wrapping to the next line (forces single line).
+
+w-25
+Sets the element’s width to 25% of its parent container.
+
+bg-light
+Gives a light gray background color, good for sidebar or card backgrounds.
+
+p-3
+Adds padding (1rem) inside the sidebar for spacing.
+
+border-end
+Adds a border on the right edge (end) of the element, visually separating the sidebar from the main content.
+
+Main content area <span>
+flex-grow-1
+Makes this element take up all remaining space in the flex container after the sidebar.
+
+p-2
+Adds smaller padding (0.5rem) inside the content area.
+
+text-nowrap
+Prevents text wrapping inside the content area (though usually you might want wrapping here).
+
+w-75
+Sets the width to 75% of the parent container (usually redundant when combined with flex-grow-1).
+  */
+</script>
+

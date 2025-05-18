@@ -1,0 +1,31 @@
+<!-- A Bootstrap component for vertical list-based menus -->
+<div class="list-group">
+  <!-- για κάθε entry του μενου που ορίζετε στο ts του component -->
+  @for (entry of menu; track entry) {
+    <!-- φτιάξε ένα λινκ -->
+    <!-- routerLink που να στέλνει το λινκ. -->
+    <a
+    class='list-group-item list-group-item-action text-truncate'
+      [routerLink]="entry.linkName"
+      [routerLinkActive] = "['active']"
+    >{{entry.text}}</a>
+  }
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- list-group	Wraps a vertical list of items in Bootstrap -->
+<!-- list-group-item	Styles each item with padding, borders, etc. -->
+<!-- list-group-item-action	Adds hover/click interaction styling -->
+<!-- text-truncate	Cuts off long text with … if there's not enough space (make sure the container has limited width and overflow-hidden) -->
+<!-- [routerLink]	Angular directive to navigate within the SPA -->
+<!-- [routerLinkActive]	Angular directive that adds class when route matches (usually to highlight active menu item) -->
