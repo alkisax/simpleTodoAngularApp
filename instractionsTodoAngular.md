@@ -441,10 +441,151 @@ module.exports = router
 - tested with swagger and all ok
 
 # Frontend with angular
+## boilerplate
+```bash
+ng new simpleTodoAngular
+```
+#### στο tsconfig.json
+```
+    "baseUrl": "./",
+```
+#### bootstrap
+```bash
+npm install bootstrap
+```
+#### angular.json
+ (προσοχη στα /)
+```
+"styles": [
+  "src/styles.css",
+  "node_modules/bootstrap/dist/css/bootstrap.rtl.min.css"
+],
+```` 
 
-## create boiler plate
+```bash
+npm install --save-dev prettier
+```
 
+φτιάχνω αρχείο .pretierrc
+```
+{
+  "overrides": [{
+    "files": "*.html",
+    "options": {
+      "parser": "angular"
+    }
+  }]
+}
+```
 ## create header and menu component with area for showing sub-components
+
+#### app.routes.ts
+// εδώ εχουμε τα διαφορετικά routes το single page app. αναλόγος σε ποιο url/ βρησκομαι θα έχει μια περιοχή στην οθόνη που θα μου εμφανίζει το περιεχόμενο του αντίστοιχου component. Πχ εδώ αν πάω στο /welcome θα μου εμφανίζει το WelcomeComponent
+```ts
+// εδώ εχουμε τα διαφορετικά routes το single page app. αναλόγος σε ποιο url/ βρησκομαι θα έχει μια περιοχή στην οθόνη που θα μου εμφανίζει το περιεχόμενο του αντίστοιχου component. Πχ εδώ αν πάω στο /welcome θα μου εμφανίζει το WelcomeComponent
+
+import { Routes } from '@angular/router';
+import {WelcomeComponent } from './components/welcome/welcome.component'
+
+export const routes: Routes = [
+  { path:'welcome', component: WelcomeComponent },
+  { path: '', redirectTo:'/welcome', pathMatch:'full' }
+];
+```
+- δημιουργεία του μενου και δημιουργεία ενώς δοκιμαστικού welcome component
+```bash
+ng generate component components/list-menu
+ng generate component components/welcome
+```
+
+#### list-menu-component.ts
+```ts
+import { Component } from '@angular/core';
+// αυτά γίνανε import γιατί χρησιμοποιούνται στην html του menu.
+// αυτό που κάνουν είναι να κάνουνε Link σε εσωτερικές ψευδοσελίδες
+// οτι μπαίνει εδώ θα πρέπει να μπεί και παρακάτω στο imports [Α]
+import { RouterLink, RouterLinkActive } from '@angular/router';
+
+@Component({
+  selector: 'app-list-menu',
+  // [Α] μπαίνουν και εδώ
+  imports: [RouterLink, RouterLinkActive],
+  templateUrl: './list-menu.component.html',
+  styleUrl: './list-menu.component.css'
+})
+export class ListMenuComponent {
+  // αυτο το μενού θα εμπλουτιστεί σιγα σιγά με τις διαφορες επιλογές του μενού
+  // τα text και linkName καλούνται στην html
+  // το app-welcome απο το @component/selector του welcome component ts
+  menu = [
+    { text: 'Welcome', linkName: 'app-welcome' }
+  ]
+}
+```
+
+- η αντίστοιχη html του μενου
+#### list-menu-component.html
+```html
+<p>list-menu works!</p>
+<div class="list-group">
+  <!-- για κάθε entry του μενου που ορίζετε στο ts του component -->
+  @for (entry of menu; track entry) {
+    <!-- φτιάξε ένα λινκ -->
+    <!-- routerLink που να στέλνει το λινκ. -->
+    <a
+    class='list-group-item list-group-item-action text-truncate'
+      [routerLink]="entry.linkName"
+      [routerLinkActive] = "['active']"
+    >{{entry.text}}</a>
+  }
+</div>
+```
+
+- επειδή ακόμα δεν μου εμφανίζετε τίποτα θα πρέπει το μενου να καταχωρηθεί στο κεντρικό app ts και html
+#### app.components.html
+```html
+<!-- δηαλδή να μου εμφανίζει το μενου και να έχει χώρο για να εμφανίζει το περιεχόμενο του κάθε component. θα πρέπει να γίνουν import και στο ts -->
+<app-list-menu></app-list-menu>
+<router-outlet></router-outlet>
+```
+
+#### app.components.ts
+```ts
+import { Component } from '@angular/core';
+// αυτό μου φτιάχνει έναν χώρο ως tag για να εμφανίζονται τα περιεχόμενα του κάθε υποcomponent σε κάθε ψευδοσελίδα του single page app. παίρνει τα routes του απο το αρχείο app.routes.ts
+// οτι μπαίνει εδώ πρέπει να προστεθεί και στο @component- imports [A]
+import { RouterOutlet } from '@angular/router';
+import { ListMenuComponent } from './components/list-menu/list-menu.component'
+
+@Component({
+  selector: 'app-root',
+  // [A]
+  imports: [RouterOutlet, ListMenuComponent],
+  templateUrl: './app.component.html',
+  styleUrl: './app.component.css'
+})
+export class AppComponent {
+  title = 'simpleTodoAngular';
+}
+```
+
+#### app.components.html
+- φτιαχνω λιγο την εμφάνηση του html με Bootstrap
+```html
+<header class="bg-primary text-white p-3 sticky-top">
+  <div class="container">
+    <h1>Simple ToDo app</h1>
+    <p>learning angular</p>
+  </div>
+</header>
+
+<div class="d-flex vh-100">
+  <app-list-menu class="text-nowrap w-25   bg-light p-3 border-end"></app-list-menu>
+  <span class="flex-grow-1 p-2 text-nowrap w-75">
+    <router-outlet></router-outlet>  
+  </span>
+</div>
+```
 
 ## create roll a dice simple sub-component
 
