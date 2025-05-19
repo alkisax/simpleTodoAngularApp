@@ -980,8 +980,8 @@ import { MatButtonModule } from '@angular/material/button';
       </mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      <p>Temperature: {{ weatherData!.main.temp }} K</p>
-      <p>Feels Like: {{ weatherData!.main.feels_like }} K</p>
+      <p>Temperature: {{ weatherData!.main.temp }} C</p>
+      <p>Feels Like: {{ weatherData!.main.feels_like }} C</p>
       <p>Condition: {{ weatherData!.weather[0].description }}</p>
       <p>Wind Speed: {{ weatherData!.wind.speed }} m/s</p>
       <p>Cloudiness: {{ weatherData!.clouds.all }}%</p>
@@ -994,3 +994,236 @@ import { MatButtonModule } from '@angular/material/button';
 ```
 
 ## todo sub-component
+```bash
+ng generate component components/todo
+ng generate interface shared/Interfaces/todo
+ng generate service shared/services/todo
+```
+
+#### environment.development.ts
+```ts
+export const environment = {
+  production: false,
+  apiURL: 'http://localhost:3001'
+};
+```
+<!-- TOC --><a name="environmentts"></a>
+#### environment.ts
+```ts
+export const environment = {
+  production: true,
+  apiURL: "https://θαΠροστεθείΟτανΓινειDeploy.com"
+};
+```
+
+- φτιάχνω το ιντερφεισ
+#### todo.ts
+```ts
+export interface Todo {
+  username: string,
+  todo: string,
+  _id: string
+}
+```
+
+- φτιάχνω το service
+#### todo.service.js
+```ts
+import { Injectable, inject, signal, effect } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { environment } from 'src/environments/environment';
+import { Todo } from '../interfaces/todo'
+import { Router } from '@angular/router';
+
+// σχολια στο weather.service.ts
+
+// τα routes τα βλέπω απο τον σερβερ στο backend
+const API_URL = `${environment.apiURL}/api/todo`
+
+@Injectable({
+  providedIn: 'root'
+})
+
+export class TodoService {
+  http: HttpClient = inject(HttpClient);
+
+  createTodo (todo:Todo) {
+    return this.http.post<{status: boolean, data: Todo}>(`${API_URL}`, todo)
+  }
+
+  getAllTodo () {
+    return this.http.get<{status: boolean, data: Todo}>(`${API_URL}`)
+  }
+
+  getByIdTodo (_id: string) {
+    return this.http.get<{status: boolean, data: Todo}>(`${API_URL}/${_id}`)
+  }
+
+  putByIdTodo (todo:Todo) {
+    return this.http.put<{status: boolean, data: Todo}>(`${API_URL}/${todo._id}`, todo)
+  }
+
+  deleteByIdTodo (_id: string) {
+    return this.http.delete<{status: boolean, data: Todo}>(`${API_URL}/${_id}`)
+  }
+  
+}
+
+/*
+const express = require('express');
+const router = express.Router()
+const todoController = require('../controllers/todo.controller')
+
+router.post('/', todoController.create)
+router.get ('/', todoController.findAll)
+router.get ('/:id', todoController.readById)
+router.put ('/:id', todoController.updateById)
+router.delete('/:id', todoController.deleteById)
+
+module.exports = router
+*/
+```
+
+- τώρα πρέπει να τα βάλω μέσα στην υπόλοιπη σελίδα για να τα βλέπω
+#### app.routes.ts
+```ts
+import { TodoComponent } from './components/todo/todo.component';
+
+  { path: 'todo', component: TodoComponent},
+```
+
+#### listmenu.ts
+```ts
+{ text: 'TODO', linkName: 'todo'}
+```
+
+- Πάω τώρα να φτιάξω το html του todo
+- πρώτα στο todo.component.ts για την εμφάνιση
+#### todo.component.ts
+```ts
+import { Component, inject } from '@angular/core';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatButtonModule } from '@angular/material/button';
+import { 
+  AbstractControl, // Base class for all form controls – useful when working generically with any form control
+  FormControl,     // Represents a single form input (like an input box)
+  FormGroup,       // Represents a group of form controls (like a whole form)
+  ReactiveFormsModule, // Required module for using reactive forms in Angular
+  Validators       // Built-in validation functions (like required, minLength, email, etc.)
+} from '@angular/forms';
+import { TodoService } from 'src/app/shared/services/todo.service';
+import { Todo } from '../../shared/interfaces/todo'
+
+
+@Component({
+  selector: 'app-todo',
+  imports: [
+    MatButtonModule, 
+    MatFormFieldModule, 
+    MatInputModule, 
+    ReactiveFormsModule
+  ],
+  templateUrl: './todo.component.html',
+  styleUrl: './todo.component.css'
+})
+export class TodoComponent {
+  todoService = inject(TodoService)
+
+  todoData: Todo | null = null
+
+  ngOnInit(): void {
+    this.refreshTodo()
+  }
+
+  refreshTodo () {
+    this.todoService.getAllTodo()
+      .subscribe((data) => {
+        console.log(data);
+        // το data.data και όχι data είναι γιατι στο service είναι:
+        // getAllTodo () {return this.http.get<{status: boolean, data: Todo}>(`${API_URL}`)}
+        // δηλ τo data έχει μέσα του {status, data}
+        this.todoData = data.data       
+      })
+  }
+
+  form = new FormGroup({
+    username: new FormControl('', Validators.required),
+    todo: new FormGroup('', Validators.required)
+  })
+}
+```
+
+- κανω μια δοκιμή με html
+```html
+<p>todo works!</p>
+<h3>Loaded Todo Data:</h3>
+@if (todoData) {
+  <pre>{{ todoData }}</pre>
+}
+```
+- και βλεπω οτι μου επιστρέφει πράγματα. οπότε τώρα πάω να ολοκληρώσω το υπολοιππ crud του frontend
+
+- προσθήκες στο ts για εφαρμογή του get by id
+#### todo.component.ts
+```ts
+import { MatCardModule } from '@angular/material/card';
+import { CommonModule } from '@angular/common'; // για να μπορέσω να χρησιμοποιήσω το *ngIf γιατι στην φορμα δεν μπορω @if
+
+  imports: [
+    MatButtonModule, 
+    MatFormFieldModule, 
+    MatInputModule, 
+    ReactiveFormsModule,
+    MatCardModule,
+    CommonModule
+  ],
+
+    // get by id
+  todoById: Todo | null = null;
+
+  idForm = new FormGroup({
+    _id: new FormControl('', Validators.required)
+  })
+
+  onSubmitViewById() {
+    const _id = this.idForm.value._id;
+    if (!_id) return; // Με υποχρέωσε η ts να το προσθέσω
+
+    this.todoService.getByIdTodo(_id)
+      .subscribe((data) => {
+        this.todoById = data.data
+      });
+  }
+```
+
+### todo.component.html
+```html
+<!-- για την εφαρμογή του view by id -->
+<form [formGroup]="idForm" (ngSubmit)="onSubmitViewById()" class="d-flex flex-column">
+  <mat-form-field>
+    <mat-label>display by id</mat-label>
+    <input type="text" matInput formControlName="_id"/>
+  </mat-form-field>
+  <button
+    mat-flat-button
+    color="primary"
+    class="mt-2"
+    type="submit"
+  >see by id</button>
+</form>
+
+
+<!-- θέλει Import MatCardModule -->
+<mat-card *ngIf="todoById">
+  <mat-card-header>
+    <mat-card-title>
+      Πληροφορίες για το todo με id: {{todoById!._id}}
+    </mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <p>username: {{ todoById!.username }}</p>
+    <p>todo: {{todoById!.todo}}</p>
+  </mat-card-content>
+</mat-card>
+```

@@ -132,7 +132,6 @@ router.get ('/:id', todoController.readById)
  */
 router.put ('/:id', todoController.updateById)
 
-
 /**
  * @swagger
  * /api/todo/{id}:

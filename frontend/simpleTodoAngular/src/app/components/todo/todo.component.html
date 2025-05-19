@@ -1,0 +1,33 @@
+<p>todo works!</p>
+<h3>Loaded Todo Data:</h3>
+@if (todoData) {
+  <pre>{{ todoData }}</pre>
+}
+
+<!-- για την εφαρμογή του view by id -->
+<form [formGroup]="idForm" (ngSubmit)="onSubmitViewById()" class="d-flex flex-column ">
+  <mat-form-field>
+    <mat-label>display by id</mat-label>
+    <input type="text" matInput formControlName="_id"/>
+  </mat-form-field>
+  <button
+    mat-flat-button
+    color="primary"
+    class="mt-2"
+    type="submit"
+  >see by id</button>
+</form>
+
+
+<!-- θέλει Import MatCardModule -->
+<mat-card *ngIf="todoById">
+  <mat-card-header>
+    <mat-card-title>
+      Πληροφορίες για το todo με id: {{todoById!._id}}
+    </mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <p>username: {{ todoById!.username }}</p>
+    <p>todo: {{todoById!.todo}}</p>
+  </mat-card-content>
+</mat-card>

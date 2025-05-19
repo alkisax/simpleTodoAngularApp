@@ -18,6 +18,7 @@ export class ListMenuComponent {
   menu = [
     { text: 'Welcome', linkName: 'welcome' },
     { text: 'Weather', linkName: 'weather'},
-    { text: 'Random', linkName: 'random'}
+    { text: 'Random', linkName: 'random'},
+    { text: 'TODO', linkName: 'todo'}
   ]
 }
