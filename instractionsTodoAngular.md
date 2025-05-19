@@ -749,7 +749,7 @@ export const appConfig: ApplicationConfig = {
 ```ts
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http'
-import { Weather } from '../interfaces/weather'
+import { WeatherResponse } from '../interfaces/weather'
 import { environment } from '../../../environments/environment'
 
 const baseUrl = 'https://api.openweathermap.org/data/2.5/weather?q='
@@ -763,10 +763,10 @@ export class WeatherService {
   http: HttpClient = inject(HttpClient)
 
     getWeather(city: string = 'Athens', country: string = 'Greece') {
-    return this.http.get<Weather>(
-      `${baseUrl}?q=${city},${country}&appid=${environment.weatherApiKey}`, {
+    return this.http.get<WeatherResponse>(
+      `${baseUrl}${city},${country}&units=metric&appid=${environment.weatherApiKey}`, {
         headers:{
-          Accetp: "application/json"
+          Accept: "application/json"
         }
       }
     );
@@ -774,9 +774,7 @@ export class WeatherService {
 }
 ```
 #### interfaces/weather.ts
-```ts
-
-```
+- δεν μπορώ να φτιάξω το Interface ακόμα γιατί δεν ξέρω σε τι μορφή μου έρχετε απο το Api τα data. Θα το προχωρήσω ως το σημειό που κάτι θα μου επιστρέφει και θα το κάνω τοτε
 
 - για να εμφανηστεί στο μενου routes/list-menu
 #### app.routes.ts
@@ -788,14 +786,154 @@ import { HttpClientComponent } from './components/http-client/http-client.compon
 
 #### list-menu.component.ts
 ```ts
-    { text: 'Random', linkName: 'random'}
+    { text: 'Weather', linkName: 'weather'},
 ```
 
 - Ο client
 #### http-client.components.ts
 ```ts
+import { Component, inject, OnInit } from '@angular/core';
+import { WeatherService } from '../../shared/services/weather.service'
+import { WeatherResponse  } from '../../shared/interfaces/weather'
 
+@Component({
+  selector: 'app-http-client',
+  imports: [],
+  templateUrl: './http-client.component.html',
+  styleUrl: './http-client.component.css'
+})
+export class HttpClientComponent {
+  weatherService = inject(WeatherService)
+
+  // weather: string = ''
+  weatherData: WeatherResponse  | null = null;
+
+  ngOnInit(): void{
+    this.refreshWeather()
+  }
+
+  refreshWeather(){
+    this.weatherService.getWeather()
+      .subscribe((data) => {
+        console.log(data);  
+      })
+  }
+}
 ```
+
+- αφου κάνω ng serve μου κάνει Log
+```
+{
+  "coord": {
+    "lon": 23.7162,
+    "lat": 37.9795
+  },
+  "weather": [
+    {
+      "id": 800,
+      "main": "Clear",
+      "description": "clear sky",
+      "icon": "01d"
+    }
+  ],
+  "base": "stations",
+  "main": {
+    "temp": 297.76,
+    "feels_like": 297.37,
+    "temp_min": 296.34,
+    "temp_max": 299.49,
+    "pressure": 1017,
+    "humidity": 40
+  },
+  "visibility": 10000,
+  "wind": {
+    "speed": 4.92,
+    "deg": 157,
+    "gust": 9.83
+  },
+  "clouds": {
+    "all": 0
+  },
+  "dt": 1747665267,
+  "sys": {
+    "type": 2,
+    "id": 2081401,
+    "country": "GR",
+    "sunrise": 1747624308,
+    "sunset": 1747675902
+  },
+  "timezone": 10800,
+  "id": 264371,
+  "name": "Athens",
+  "cod": 200
+}
+```
+- πηγα στην ιστοσελίδα https://transform.tools/json-to-typescript και μου έυτιαξε το interface
+```ts
+export interface WeatherResponse  {
+  coord: Coord
+  weather: Weather[]
+  base: string
+  main: Main
+  visibility: number
+  wind: Wind
+  clouds: Clouds
+  dt: number
+  sys: Sys
+  timezone: number
+  id: number
+  name: string
+  cod: number
+}
+
+export interface Coord {
+  lon: number
+  lat: number
+}
+
+export interface Weather {
+  id: number
+  main: string
+  description: string
+  icon: string
+}
+
+export interface Main {
+  temp: number
+  feels_like: number
+  temp_min: number
+  temp_max: number
+  pressure: number
+  humidity: number
+}
+
+export interface Wind {
+  speed: number
+  deg: number
+  gust: number
+}
+
+export interface Clouds {
+  all: number
+}
+
+export interface Sys {
+  type: number
+  id: number
+  country: string
+  sunrise: number
+  sunset: number
+}
+```
+- τώρα που έλαβα τα ντάτα και τα διαμόρφωσα πρέπει να τα κάνω να εμφανιστουν στην σελίδα φτιαχνοντας το αντιστοιχοο τεμπλειτ
+#### http-client.component.ts
+```ts
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+
+  imports: [MatButtonModule, MatCardModule],
+```
+
 
 
 

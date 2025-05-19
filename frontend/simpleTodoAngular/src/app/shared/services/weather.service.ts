@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http'
-import { Weather } from '../interfaces/weather'
+import { WeatherResponse  } from '../interfaces/weather'
 import { environment } from '../../../environments/environment'
 
 const baseUrl = 'https://api.openweathermap.org/data/2.5/weather?q='
@@ -14,8 +14,8 @@ export class WeatherService {
   http: HttpClient = inject(HttpClient)
 
     getWeather(city: string = 'Athens', country: string = 'Greece') {
-    return this.http.get<Weather>(
-      `${baseUrl}?q=${city},${country}&appid=${environment.weatherApiKey}`, {
+    return this.http.get<WeatherResponse >(
+      `${baseUrl}${city},${country}&units=metric&appid=${environment.weatherApiKey}`, {
         headers:{
           Accept: "application/json"
         }
