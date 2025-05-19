@@ -579,6 +579,13 @@ export class AppComponent {
   </div>
 </header>
 
+#### welcome.component.html
+```html
+<p>welcome works!</p>
+<!-- Angular serves the 'public' folder contents at the root. So the correct path excludes 'public' and starts directly with 'assets/' δηλαδή δεν βάζουμε ../../κλπ -->
+<img src="assets/welcome.png" alt="Logo" style="width: 50%; height: auto;"/>
+```
+
 <div class="d-flex vh-100">
   <app-list-menu class="text-nowrap w-25   bg-light p-3 border-end"></app-list-menu>
   <span class="flex-grow-1 p-2 text-nowrap w-75">
@@ -715,6 +722,10 @@ $	- $event	- Event object (passed to handlers)
 ```
 
 ## showcase connect with internet api sub-component
+- http-client είναι το κεντρικό sub component μου
+- weather είναι το sevice μου που αναλαμβάνει το `this.http.get<WeatherResponse>`
+- weather είναι η tyescript κλάση μου διλώνω αν είναι string number etc
+- environments είναι το env μου. Προσοχή έχει δύο αρχεία τα θέλω και τα δύο
 ```bash
 ng generate component components/http-client
 ng generate service shared/services/weather
@@ -740,43 +751,48 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }), provideRouter(routes),
     provideAnimationsAsync(),
-    provideHttpClient(withInterceptorsFromDi())
+    provideHttpClient(withInterceptorsFromDi()) // Enables HTTP client functionality throughout your application, the withInterceptorsFromDi() part allows you to use dependency-injected interceptors
   ]
 };
 ```
 
 #### weather.service.ts
+σημείωση <font color="red"> @Injectable({})  </font>
 ```ts
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http'
-import { WeatherResponse } from '../interfaces/weather'
+import { WeatherResponse  } from '../interfaces/weather'
 import { environment } from '../../../environments/environment'
 
 const baseUrl = 'https://api.openweathermap.org/data/2.5/weather?q='
 
-@Injectable({
-  providedIn: 'root'
+// Πού χρησιμοποιείται; - Στο component σου ως:
+// weatherService = inject(WeatherService);
+@Injectable({ //Το @Injectable δηλώνει ότι αυτή η κλάση μπορεί να χρησιμοποιηθεί ως service από άλλα μέρη της εφαρμογής.
+  providedIn: 'root' //Λέει στην Angular: "Κάνε διαθέσιμο αυτό το service σε ολόκληρη την εφαρμογή".
 })
 export class WeatherService {
 
   // αυτή η μεταβλιτή κληρονομοί όλλες τις ιδιώτητες του service HttpClient. Με το inject γιατί έχει @Injectable εδώ λίγο παραπάνω
   http: HttpClient = inject(HttpClient)
 
+    // μαζί με τις παραμέτρους δηλώνω και τον τύπο τους και την αρχική τους τιμή
     getWeather(city: string = 'Athens', country: string = 'Greece') {
     return this.http.get<WeatherResponse>(
       `${baseUrl}${city},${country}&units=metric&appid=${environment.weatherApiKey}`, {
+        //Σημαίνει: θέλω να μου στείλεις δεδομένα σε JSON μορφή
         headers:{
           Accept: "application/json"
         }
       }
-    );
+    )
   }
 }
 ```
 #### interfaces/weather.ts
 - δεν μπορώ να φτιάξω το Interface ακόμα γιατί δεν ξέρω σε τι μορφή μου έρχετε απο το Api τα data. Θα το προχωρήσω ως το σημειό που κάτι θα μου επιστρέφει και θα το κάνω τοτε
 
-- για να εμφανηστεί στο μενου routes/list-menu
+- για να εμφανιστεί στο μενου τα προσθέτω στα routes/list-menu
 #### app.routes.ts
 ```ts
 import { HttpClientComponent } from './components/http-client/http-client.component'
@@ -789,7 +805,9 @@ import { HttpClientComponent } from './components/http-client/http-client.compon
     { text: 'Weather', linkName: 'weather'},
 ```
 
-- Ο client
+- Ο client  
+σημείωση <font color="red"> ngOnInit(): void{}</font>  
+σημείωση <font color="red"> this.weatherService.getWeather().subscribe((data) => {console.log(data);})</font>
 #### http-client.components.ts
 ```ts
 import { Component, inject, OnInit } from '@angular/core';
@@ -803,19 +821,36 @@ import { WeatherResponse  } from '../../shared/interfaces/weather'
   styleUrl: './http-client.component.css'
 })
 export class HttpClientComponent {
+  // επειδη το service εχει @Injectable
   weatherService = inject(WeatherService)
 
-  // weather: string = ''
+  // το weatherData έρχετε απο το interface μου. προσθέθηκε λίγο αργότερα αφου έκανα log την πρώτη κλήσει για να δω τι μου επιστρέφει και τι τύπου είναι
   weatherData: WeatherResponse  | null = null;
 
+  // τι τρέχει κάθε φορα που κάνει refresh
+  // : void σημαίνει οτι δεν επιστρέφει τίποτα
   ngOnInit(): void{
     this.refreshWeather()
   }
 
+  /*
+  Ένα Observable είναι σαν Promise, αλλά:
+  Για να "το ενεργοποιήσεις" → κάνεις .subscribe()
+  Για Promise → κάνεις await ή .then(...)
+  Σύγκριση:
+  // Observable
+  this.http.get(...).subscribe(data => console.log(data));
+  // Promise
+  const data = await axios.get(...);
+  console.log(data);
+  Και τα δύο περιμένουν ασύγχρονα αποτελέσματα — απλώς το Observable είναι πιο "πλούσιο" (μπορεί να στείλει πολλά events αντί για ένα μόνο).
+  */
   refreshWeather(){
     this.weatherService.getWeather()
       .subscribe((data) => {
-        console.log(data);  
+        console.log(data);
+        // προστέθηκε αφου κάναμε ένα log σκέτο ωστε να μπορέσουμε να φτιάξουμε το interface
+        this.weatherData = data 
       })
   }
 }
@@ -934,8 +969,28 @@ import { MatButtonModule } from '@angular/material/button';
   imports: [MatButtonModule, MatCardModule],
 ```
 
-
-
-
+#### http-client.component.html
+```html
+<!-- το ! ειναι -> είμαι σίγουρος ότι αυτή η τιμή ΔΕΝ είναι null ή undefined — μην μου βγάζεις λάθος -->
+@if (weatherData) {
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>
+        Weather in {{ weatherData!.name }}, {{ weatherData!.sys.country }}
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <p>Temperature: {{ weatherData!.main.temp }} K</p>
+      <p>Feels Like: {{ weatherData!.main.feels_like }} K</p>
+      <p>Condition: {{ weatherData!.weather[0].description }}</p>
+      <p>Wind Speed: {{ weatherData!.wind.speed }} m/s</p>
+      <p>Cloudiness: {{ weatherData!.clouds.all }}%</p>
+      <p>Visibility: {{ weatherData!.visibility }} meters</p>
+    </mat-card-content>
+  </mat-card>
+} @else {
+  <p>Loading or no data...</p>
+}
+```
 
 ## todo sub-component
