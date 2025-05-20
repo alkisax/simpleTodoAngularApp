@@ -1227,3 +1227,110 @@ import { CommonModule } from '@angular/common'; // για να μπορέσω ν
   </mat-card-content>
 </mat-card>
 ```
+
+- προσθήκες στο ts για εφαρμογή για delete by id
+#### todo.component.ts
+```ts
+  //delete by id
+  deleteById: Todo | null = null
+   onSubmintDeleteById() {
+    const _id = this.idForm.value._id
+    if (!_id) return
+
+    const confirmed = window.confirm('Are you sure you want to delete this todo?');
+    if (!confirmed) {
+      return; 
+    }
+
+    this.todoService.deleteByIdTodo(_id)
+      .subscribe((data) => {
+        console.log("deleted", data)        
+      })
+    this.refreshTodo()
+   }
+```
+#### todo.comonent.html
+```html
+<form
+  [formGroup]="idForm"
+  (ngSubmit)="onSubmitViewById()"
+  class="d-flex flex-column"
+>
+<!-- ...[etc]... -->
+  <!-- έχουμε ήδη ενα type submit btn για αυτό (click) -->
+  <button
+    mat-flat-button
+    color="warn"
+    class="mt-2"
+    type="button"
+    (click)="onSubmintDeleteById()"
+  >delete by id</button>
+</form>
+```
+
+- προσθήκες στο ts για εφαρμογή για create todo
+#### todo.component.ts
+```ts
+   // create todo
+
+  createForm = new FormGroup({
+    username: new FormControl('', Validators.required),
+    todo: new FormControl('', Validators.required)
+  })
+
+  onSubmitCreateTodo() {
+    if (this.createForm.invalid) {
+      return; 
+    }
+
+    const newTodo: Todo = {
+      username: this.createForm.value.username!,
+      todo: this.createForm.value.todo!,
+      _id: ''  // _id will be assigned by backend, so empty here
+    };
+
+    this.todoService.createTodo(newTodo)
+      .subscribe((response) => {
+          console.log('Created todo:', response.data);
+          window.alert('Todo created successfully!');
+          this.createForm.reset(); // Clear the form after create
+          this.refreshTodo();
+        }
+      );
+  }
+```
+#### todo.component.html
+```html
+<h3>Create new todo</h3>
+<form
+  [formGroup]="createForm"
+  (ngSubmit)="onSubmitCreateTodo()"
+  class="d-flex flex-column mb-5"
+>
+  <mat-form-field>
+    <mat-label>username</mat-label>
+    <input 
+      type="text"
+      matInput
+      formControlName="username"
+    />
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>To Do</mat-label>
+    <input 
+      type="text"
+      matInput
+      formControlName="todo"
+    />
+  </mat-form-field>
+
+  <button
+    mat-flat-button
+    color="primary"
+    class="mt-2"
+    type="submit"
+    [disabled]="createForm.invalid"
+  >submit</button>
+</form>
+```
