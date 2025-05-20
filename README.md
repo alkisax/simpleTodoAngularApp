@@ -7,6 +7,7 @@ A comprehensive full-stack learning project built with **Angular 19 (frontend)**
 - [Full Documentation](https://github.com/alkisax/simpleTodoAngularApp/blob/main/README.md)
 - [GitHub Repository](https://github.com/alkisax/simpleTodoAngularApp)
 - [Step-by-Step Development Guide](https://github.com/alkisax/simpleTodoAngularApp/blob/main/instractionsTodoAngular.md)
+- [swagger api-docs](https://simpletodoangularapp.onrender.com/api-docs/)
 
 ## 🚀 Key Features
 ### 1. Welcome Page
