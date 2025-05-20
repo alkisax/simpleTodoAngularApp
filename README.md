@@ -1,8 +1,14 @@
 # Angular Learning Project - Todo App with Weather & Random Generator
 
-A comprehensive Angular learning project demonstrating various web development concepts through practical implementations.
+A comprehensive full-stack learning project built with **Angular 19 (frontend)** and **Node.js/Express (backend)** that demonstrates modern web development techniques. The application combines multiple features to showcase different aspects of development including API integration, database operations, and interactive UI components.
 
-## Features
+## 🔗 Project Links
+- [Live Demo](https://simpletodoangularapp.onrender.com/)
+- [Full Documentation](https://github.com/alkisax/simpleTodoAngularApp/blob/main/README.md)
+- [GitHub Repository](https://github.com/alkisax/simpleTodoAngularApp)
+- [Step-by-Step Development Guide](https://github.com/alkisax/simpleTodoAngularApp/blob/main/instractionsTodoAngular.md)
+
+## 🚀 Key Features
 ### 1. Welcome Page
 - Simple landing page with an image
 - Introduction to the application
@@ -20,7 +26,7 @@ A comprehensive Angular learning project demonstrating various web development c
 - **Delete**: Remove todos with confirmation
 - Connected to a Node.js/Express/MongoDB backend
 
-## Technologies Used
+##  💻 Technology Stack
 ### Frontend (Angular)
 - **Angular 19** - Core framework
 - **Angular Material** - UI components
@@ -38,7 +44,7 @@ A comprehensive Angular learning project demonstrating various web development c
 ### APIs
 - **OpenWeatherMap API** - Weather data
 
-## Learning Objectives Achieved
+## 📚 Learning Outcomes
 This project was created to learn and demonstrate:
 - Angular component architecture
 - Reactive forms and validation
