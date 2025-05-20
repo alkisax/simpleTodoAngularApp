@@ -1923,5 +1923,71 @@ export class TodoComponent {
     >submit</button>
   </form>
 </mat-card>
-
 ```
+
+# deploy
+## local αλλαγες και δοκιμες πριν το deploy
+### φτιάχνω νεο branch για το deploy στο github (για λογους ασφαλειας)
+```bash
+git checkout -b deploy
+git push origin deploy
+```
+### script για αυτόματη αλλαγή του dist φακέλου στο backend
+#### package.json (front)
+```json
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test",
+    "build:to-backend": "rm -rf ../../backend/dist && ng build --output-path=../../backend/dist --configuration production" //πρεπει να προσαρμοστεί ανα περίπτωση
+  },
+```
+```bash
+npm run build:to-backend
+```
+- (μου ζήτησε να εγκαταστήσω αυτή την βιβλιοθήκε `npm install @angular/animations`)  
+- επειδή το build της angular δεν γινόταν κατευθείαν στον dist φάκελο του backend αλλά μεσα σε ένα υποφάκελο browser πρέπει να κάνω μικρές αλλαγές στις αντοίστηχες γραμμες του app.js (back)
+#### app.js
+```js
+// για να σερβίρει τον φακελο dist του front μετα το npm run build:to-backend
+// app.use(express.static('dist'))
+app.use(express.static(path.join(__dirname, 'dist', 'browser')));
+
+//...
+
+app.get(/^\/(?!api|api-docs).*/, (req, res) => {
+  // res.sendFile(path.resolve(__dirname, 'dist', 'index.html'));
+  res.sendFile(path.resolve(__dirname, 'dist', 'browser', 'index.html'));
+});
+```
+- πριν ξεκινήσω το deploy κάνω μια δοκιμή αν ο dist φακελος που βρισκετε στο backend λειτουργει κανονικά. Για να τρέξει θα πρέπει να αλλαξω το enviroment.ts (front) (οχι το production, το κανονικό) απο
+```ts
+export const environment = {
+  production: true,
+  weatherApiKey: '3e8e3b95ae3ba2e1e20dbd3f7beaa176',
+  apiURL: "https://θαΠροστεθείΟτανΓινειDeploy.com"
+};
+```
+σε
+```ts
+export const environment = {
+  production: true,
+  weatherApiKey: '3e8e3b95ae3ba2e1e20dbd3f7beaa176',
+  apiURL: "http://localhost:3001"
+};
+```
+- Μετά το deploy αυτό θα πρέπει να αλαχθει ξανα
+- το gpt μου είπε πως οι env μεταβλητές του front είναι hardcoded μεσα στον dist folder και δεν είναι αναγκη να μπουνε στο render. μονο το .env του backend
+
+## render
+- https://dashboard.render.com/login
+- production '+' -> '+ create new service'
+- mew web service
+- git provider -> git credentials v -> configure in github -> Only select repositories -> βρίσκω το repo μου -> save
+- επιλέγω το repo που πρόσθεσα
+- branch -> deploy
+- Root Directory -> backend
+- free
+- Environment Variables -> add from .env -> copy paste

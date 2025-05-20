@@ -25,8 +25,9 @@ app.use('/api/todo', todoRoutes)
 // swagger test page
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 
-// για να σερβίρει τον φακελο dist του front μετα το npm run build
-app.use(express.static('dist'))
+// για να σερβίρει τον φακελο dist του front μετα το npm run build:to-backend
+// app.use(express.static('dist'))
+app.use(express.static(path.join(__dirname, 'dist', 'browser')));
 
 // αυτό ειναι κάτι που ίσως μου χρειαστεί στο deploy // τελικά έβγαζε προβλήματα και χρησιμοποιήθηκε το επόμενο
 // app.get('/*', (req, res, next) => {
@@ -35,7 +36,8 @@ app.use(express.static('dist'))
 //   }
 //αυτο
 app.get(/^\/(?!api|api-docs).*/, (req, res) => {
-  res.sendFile(path.resolve(__dirname, 'dist', 'index.html'));
+  // res.sendFile(path.resolve(__dirname, 'dist', 'index.html'));
+  res.sendFile(path.resolve(__dirname, 'dist', 'browser', 'index.html'));
 });
 
 //   res.sendFile(path.resolve(__dirname, 'dist', 'index.html'));
