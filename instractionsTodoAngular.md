@@ -1016,7 +1016,7 @@ export const environment = {
 };
 ```
 
-- φτιάχνω το ιντερφεισ
+### φτιάχνω το ιντερφεισ
 #### todo.ts
 ```ts
 export interface Todo {
@@ -1026,7 +1026,7 @@ export interface Todo {
 }
 ```
 
-- φτιάχνω το service
+### φτιάχνω το service
 #### todo.service.js
 ```ts
 import { Injectable, inject, signal, effect } from '@angular/core';
@@ -1059,8 +1059,8 @@ export class TodoService {
     return this.http.get<{status: boolean, data: Todo}>(`${API_URL}/${_id}`)
   }
 
-  putByIdTodo (todo:Todo) {
-    return this.http.put<{status: boolean, data: Todo}>(`${API_URL}/${todo._id}`, todo)
+  putByIdTodo (_id: string, todo:Todo) {
+    return this.http.put<{status: boolean, data: Todo}>(`${API_URL}/${_id}`, todo)
   }
 
   deleteByIdTodo (_id: string) {
@@ -1084,7 +1084,7 @@ module.exports = router
 */
 ```
 
-- τώρα πρέπει να τα βάλω μέσα στην υπόλοιπη σελίδα για να τα βλέπω
+### τώρα πρέπει να τα βάλω μέσα στην υπόλοιπη σελίδα για να τα βλέπω
 #### app.routes.ts
 ```ts
 import { TodoComponent } from './components/todo/todo.component';
@@ -1097,7 +1097,7 @@ import { TodoComponent } from './components/todo/todo.component';
 { text: 'TODO', linkName: 'todo'}
 ```
 
-- Πάω τώρα να φτιάξω το html του todo
+### Πάω τώρα να φτιάξω το html του todo
 - πρώτα στο todo.component.ts για την εμφάνιση
 #### todo.component.ts
 ```ts
@@ -1164,7 +1164,7 @@ export class TodoComponent {
 ```
 - και βλεπω οτι μου επιστρέφει πράγματα. οπότε τώρα πάω να ολοκληρώσω το υπολοιππ crud του frontend
 
-- προσθήκες στο ts για εφαρμογή του get by id
+### προσθήκες στο ts για εφαρμογή του get by id
 #### todo.component.ts
 ```ts
 import { MatCardModule } from '@angular/material/card';
@@ -1197,7 +1197,7 @@ import { CommonModule } from '@angular/common'; // για να μπορέσω ν
   }
 ```
 
-### todo.component.html
+#### todo.component.html
 ```html
 <!-- για την εφαρμογή του view by id -->
 <form [formGroup]="idForm" (ngSubmit)="onSubmitViewById()" class="d-flex flex-column">
@@ -1228,7 +1228,7 @@ import { CommonModule } from '@angular/common'; // για να μπορέσω ν
 </mat-card>
 ```
 
-- προσθήκες στο ts για εφαρμογή για delete by id
+### προσθήκες στο ts για εφαρμογή για delete by id
 #### todo.component.ts
 ```ts
   //delete by id
@@ -1268,7 +1268,7 @@ import { CommonModule } from '@angular/common'; // για να μπορέσω ν
 </form>
 ```
 
-- προσθήκες στο ts για εφαρμογή για create todo
+### προσθήκες στο ts για εφαρμογή για create todo
 #### todo.component.ts
 ```ts
    // create todo
@@ -1333,4 +1333,176 @@ import { CommonModule } from '@angular/common'; // για να μπορέσω ν
     [disabled]="createForm.invalid"
   >submit</button>
 </form>
+```
+
+### προσθήκες για εφαρμογή του put
+- Συναντησα το εξής προβλημα, έφτιαχνα ένα νεο todo για να σταλθεί για την αλλαγή. Αν στην αλλαγή οριζόntαn _id τοτε χτύπαγε το backend που περίμενε μόνο δυο πεδία. αλλα αν το εβγαζα χτύπαγε η ts γιατι δεν ακολουθούσα το interface. για να διορθωθεί αυτο έγινε η εξής αλλαγή στο interface με την προσθήκη _id? όπου το '?' σημαίνει μη υποχρεωτικό πεδίο
+#### interface/todo.ts
+```ts
+export interface Todo {
+  username: string,
+  todo: string,
+  _id?: string
+}
+```
+
+#### todo.component.ts
+```ts
+  // change todo
+  // το changeForm εμφανίζετε αν πατηθεί το κομπι change μέσα στο υπομενου που εμφανίζετε αν δώσεις αναζήτηση μέσο id. 
+
+  changeTodoById: Todo | null = null // αρχικόποιώ μια μεταβλητή για να αποθηκέυσει το παλιό todo θα χρειαστεί για να κάνω prefill την φορμα αλλαγής
+  isToChange: boolean = false // θα χρησιμοποιηθεί για να κάνει toggle το changeForm
+
+  // εχω δύο κουμπια. το ένα για να επηλέξω οτι θέλω να αλλαξω το todo δινοντας id. και το άλλο για να κάνω submit την αλλαγή μου
+  toggleIsToChange = () => {
+    this.isToChange = !this.isToChange
+    this.onSubmitViewById() // το viewById όχι μονο χρειάζετε για να είναι σιγουρο οτι βλέπω το todo που αλλάζω αλλα μου δημιουργεί και το todoById
+
+    if (this.isToChange) {
+      const _id = this.idForm.value._id;
+      if (!_id) return; 
+
+      this.todoService.getByIdTodo(_id)
+        .subscribe((data) => {
+          this.changeTodoById = data.data
+          
+          // Prefill form
+            console.log('Received for patching:', this.changeTodoById);
+          // patchValue updates the form controls with the given values without affecting other controls.
+          // It allows partial updates to the form — you don't have to provide values for all controls,
+          // only the ones you want to change. Here, we're pre-filling the 'username' and 'todo' inputs
+          // in the form with the data fetched from the backend so the user can edit them easily.
+          this.changeForm.patchValue({
+            username: this.changeTodoById.username,
+            todo: this.changeTodoById.todo
+          });
+        });
+    }
+  }
+
+  changeForm = new FormGroup({
+    username: new FormControl('', Validators.required),
+    todo: new FormControl('', Validators.required)
+  })
+
+  onSubmitChangeTodo() {
+    const _id = this.idForm.value._id // το id απο το idForm
+    if (!_id) return
+
+    if (this.changeForm.invalid) { // το changeForm έιναι άλλο απο το idForm 
+      return; 
+    }
+
+    const newTodo: Todo = {
+      username: this.changeForm.value.username!,
+      todo: this.changeForm.value.todo!,
+      // _id: ''  // _id will be assigned by backend, so empty here
+    };
+
+    const confirmed = window.confirm('Are you sure you want to change this todo?');
+    if (!confirmed) {
+      return; 
+    }
+
+    this.todoService.putByIdTodo(_id, newTodo)
+      .subscribe((response) => {
+          console.log('Created todo:', response.data);
+          window.alert('Todo changed successfully!');
+          this.changeForm.reset(); // Clear the form after create
+          this.isToChange = false // για να μου κρήψει το υπομενου
+          this.refreshTodo();
+        }
+      );
+  }
+```
+
+#### todo.component.html
+```html
+<!-- για την εφαρμογή του view by id -->
+<h3>Alter todo by id</h3>
+<form
+  [formGroup]="idForm"
+  (ngSubmit)="onSubmitViewById()"
+  class="d-flex flex-column"
+>
+  <mat-form-field>
+    <mat-label>display by id</mat-label>
+    <input type="text" matInput formControlName="_id"/>
+  </mat-form-field>
+  <button
+    mat-flat-button
+    color="primary"
+    class="mt-2"
+    type="submit"
+  >see by id</button>
+
+  <!-- έχουμε ήδη ενα type submit btn για αυτό (click) -->
+  <button
+    mat-flat-button
+    color="warn"
+    class="mt-2"
+    type="button"
+    (click)="onSubmintDeleteById()"
+  >delete by id</button>
+
+  <button
+    mat-flat-button
+    color="accent"
+    class="mt-2"
+    type="button"
+    (click)="toggleIsToChange()"
+  >change by id</button>
+</form>
+
+
+<!-- θέλει Import MatCardModule -->
+<mat-card *ngIf="todoById">
+  <mat-card-header>
+    <mat-card-title>
+      Πληροφορίες για το todo με id: {{todoById!._id}}
+    </mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <p>username: {{ todoById!.username }}</p>
+    <p>todo: {{todoById!.todo}}</p>
+  </mat-card-content>
+</mat-card>
+
+<mat-card *ngIf="isToChange">
+  <mat-card-header>
+    change To Do
+  </mat-card-header>
+  <form
+    [formGroup]="changeForm"
+    (ngSubmit)="onSubmitChangeTodo()"
+    class="d-flex flex-column mb-5"
+  >
+    <mat-form-field>
+      <mat-label>username</mat-label>
+      <input 
+        type="text"
+        matInput
+        formControlName="username"
+      />
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>To Do</mat-label>
+      <input 
+        type="text"
+        matInput
+        formControlName="todo"
+      />
+    </mat-form-field>
+
+    <button
+      mat-flat-button
+      color="primary"
+      class="mt-2"
+      type="submit"
+      [disabled]="changeForm.invalid"
+    >submit</button>
+  </form>
+</mat-card>
 ```

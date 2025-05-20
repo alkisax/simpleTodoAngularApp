@@ -38,6 +38,7 @@
 </form>
 
 <!-- για την εφαρμογή του view by id -->
+<h3>Alter todo by id</h3>
 <form
   [formGroup]="idForm"
   (ngSubmit)="onSubmitViewById()"
@@ -62,6 +63,14 @@
     type="button"
     (click)="onSubmintDeleteById()"
   >delete by id</button>
+
+  <button
+    mat-flat-button
+    color="accent"
+    class="mt-2"
+    type="button"
+    (click)="toggleIsToChange()"
+  >change by id</button>
 </form>
 
 
@@ -76,4 +85,41 @@
     <p>username: {{ todoById!.username }}</p>
     <p>todo: {{todoById!.todo}}</p>
   </mat-card-content>
+</mat-card>
+
+<mat-card *ngIf="isToChange">
+  <mat-card-header>
+    change To Do
+  </mat-card-header>
+  <form
+    [formGroup]="changeForm"
+    (ngSubmit)="onSubmitChangeTodo()"
+    class="d-flex flex-column mb-5"
+  >
+    <mat-form-field>
+      <mat-label>username</mat-label>
+      <input 
+        type="text"
+        matInput
+        formControlName="username"
+      />
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>To Do</mat-label>
+      <input 
+        type="text"
+        matInput
+        formControlName="todo"
+      />
+    </mat-form-field>
+
+    <button
+      mat-flat-button
+      color="primary"
+      class="mt-2"
+      type="submit"
+      [disabled]="changeForm.invalid"
+    >submit</button>
+  </form>
 </mat-card>

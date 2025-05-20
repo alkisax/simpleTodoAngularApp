@@ -28,8 +28,8 @@ export class TodoService {
     return this.http.get<{status: boolean, data: Todo}>(`${API_URL}/${_id}`)
   }
 
-  putByIdTodo (todo:Todo) {
-    return this.http.put<{status: boolean, data: Todo}>(`${API_URL}/${todo._id}`, todo)  //ισως να έχει προβλημα το todo._id
+  putByIdTodo (_id: string, todo:Todo) {
+    return this.http.put<{status: boolean, data: Todo}>(`${API_URL}/${_id}`, todo)  
   }
 
   deleteByIdTodo (_id: string) {
