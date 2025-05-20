@@ -32,7 +32,7 @@ export class TodoComponent {
   todoService = inject(TodoService)
 
   // get all
-  todoData: Todo | null = null
+  todoData: Todo[] | null = null
 
   ngOnInit(): void {
     this.refreshTodo()

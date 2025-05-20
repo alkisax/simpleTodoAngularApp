@@ -21,7 +21,7 @@ export class TodoService {
   }
 
   getAllTodo () {
-    return this.http.get<{status: boolean, data: Todo}>(`${API_URL}`)
+    return this.http.get<{status: boolean, data: Todo[]}>(`${API_URL}`)
   }
 
   getByIdTodo (_id: string) {

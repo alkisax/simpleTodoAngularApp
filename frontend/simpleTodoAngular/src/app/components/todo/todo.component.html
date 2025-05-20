@@ -1,7 +1,18 @@
 <p>todo works!</p>
 <h3>Loaded Todo Data:</h3>
-@if (todoData) {
-  <pre>{{ todoData }}</pre>
+@if (todoData?.length) {
+  <ul>
+    @for (todo of todoData; track todo._id) {
+      <li>
+        <strong>{{ todo.username }}</strong> <br />
+        {{ todo.todo }} <hr />
+        <small>id: {{ todo._id }}</small><br/>
+        <hr />
+      </li>
+    }
+  </ul>
+} @else {
+  <p>No todos found.</p>
 }
 
 <h3>Create new todo</h3>
