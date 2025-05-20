@@ -1989,5 +1989,17 @@ export const environment = {
 - επιλέγω το repo που πρόσθεσα
 - branch -> deploy
 - Root Directory -> backend
+- Start Command -> npm start
 - free
 - Environment Variables -> add from .env -> copy paste
+- deploy
+
+#### αλλάζω ξανα το environment.ts
+```ts
+export const environment = {
+  production: true,
+  weatherApiKey: '3e8e3b95ae3ba2e1e20dbd3f7beaa176',
+  apiURL: "https://simpletodoangularapp.onrender.com"
+};
+```
+- και κάνω npm run build:to-backend (απο τον φάκελο του front) και git add . / git commit -m "deploy" / git push origin deploy απο τον συνολικό φάκελο
