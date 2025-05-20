@@ -4,8 +4,47 @@
   <pre>{{ todoData }}</pre>
 }
 
+<h3>Create new todo</h3>
+<form
+  [formGroup]="createForm"
+  (ngSubmit)="onSubmitCreateTodo()"
+  class="d-flex flex-column mb-5"
+>
+  <mat-form-field>
+    <mat-label>username</mat-label>
+    <input 
+      type="text"
+      matInput
+      formControlName="username"
+    />
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>To Do</mat-label>
+    <input 
+      type="text"
+      matInput
+      formControlName="todo"
+    />
+  </mat-form-field>
+
+  <button
+    mat-flat-button
+    color="primary"
+    class="mt-2"
+    type="submit"
+    [disabled]="createForm.invalid"
+  >submit</button>
+
+
+</form>
+
 <!-- για την εφαρμογή του view by id -->
-<form [formGroup]="idForm" (ngSubmit)="onSubmitViewById()" class="d-flex flex-column ">
+<form
+  [formGroup]="idForm"
+  (ngSubmit)="onSubmitViewById()"
+  class="d-flex flex-column"
+>
   <mat-form-field>
     <mat-label>display by id</mat-label>
     <input type="text" matInput formControlName="_id"/>
@@ -16,6 +55,15 @@
     class="mt-2"
     type="submit"
   >see by id</button>
+
+  <!-- έχουμε ήδη ενα type submit για αυτό (click) -->
+  <button
+    mat-flat-button
+    color="warn"
+    class="mt-2"
+    type="button"
+    (click)="onSubmintDeleteById()"
+  >delete by id</button>
 </form>
 
 

@@ -64,12 +64,53 @@ export class TodoComponent {
       .subscribe((data) => {
         this.todoById = data.data
       });
+    this.refreshTodo()
   }
 
+  //delete by id
+  deleteById: Todo | null = null
+   onSubmintDeleteById() {
+    const _id = this.idForm.value._id
+    if (!_id) return
 
-  form = new FormGroup({
+    const confirmed = window.confirm('Are you sure you want to delete this todo?');
+    if (!confirmed) {
+      return; 
+    }
+
+    this.todoService.deleteByIdTodo(_id)
+      .subscribe((data) => {
+        console.log("deleted", data)        
+      })
+    this.refreshTodo()
+   }
+
+   // create todo
+
+  createForm = new FormGroup({
     username: new FormControl('', Validators.required),
-    todo: new FormGroup('', Validators.required)
+    todo: new FormControl('', Validators.required)
   })
+
+  onSubmitCreateTodo() {
+    if (this.createForm.invalid) {
+      return; 
+    }
+
+    const newTodo: Todo = {
+      username: this.createForm.value.username!,
+      todo: this.createForm.value.todo!,
+      _id: ''  // _id will be assigned by backend, so empty here
+    };
+
+    this.todoService.createTodo(newTodo)
+      .subscribe((response) => {
+          console.log('Created todo:', response.data);
+          window.alert('Todo created successfully!');
+          this.createForm.reset(); // Clear the form after create
+          this.refreshTodo();
+        }
+      );
+  }
 
 }
