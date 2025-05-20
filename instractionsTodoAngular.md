@@ -2003,3 +2003,5 @@ export const environment = {
 };
 ```
 - και κάνω npm run build:to-backend (απο τον φάκελο του front) και git add . / git commit -m "deploy" / git push origin deploy απο τον συνολικό φάκελο
+
+# ολα λειτουργούν 🎉
