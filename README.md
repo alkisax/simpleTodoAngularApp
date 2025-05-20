@@ -63,3 +63,20 @@ npm install
 ng serve
 ```
 3. Open http://localhost:4200 in your browser
+
+## Preview
+
+### Welcome Page  
+![Welcome](https://github.com/alkisax/simpleTodoAngularApp/blob/main/screenshots/welcome.png)
+
+### Random Number Generator  
+![Random Number](https://github.com/alkisax/simpleTodoAngularApp/blob/main/screenshots/random.png)
+
+### Weather Page  
+![Weather](https://github.com/alkisax/simpleTodoAngularApp/blob/main/screenshots/weather.png)
+
+### Todo App - List View  
+![Todo List](https://github.com/alkisax/simpleTodoAngularApp/blob/main/screenshots/todo1.png)
+
+### Todo App - Edit View  
+![Todo Edit](https://github.com/alkisax/simpleTodoAngularApp/blob/main/screenshots/todo2.png)
